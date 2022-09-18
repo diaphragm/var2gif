@@ -30,6 +30,8 @@ class Script(scripts.Script):
         processing.fix_seed(p)
         p.batch_size = 1
 
+        init_subseed = p.subseed
+
         def gif_file_path():
             basename = "var2gif"
 
@@ -39,7 +41,7 @@ class Script(scripts.Script):
                 dir_name = os.path.join(dir_name, subdir_name)
 
             file_decoration = apply_filename_pattern(opts.samples_filename_pattern or "[seed]-[prompt_spaces]", p, p.seed, p.prompt)
-            basecount = get_next_sequence_number(outdir_gif, basename)
+            basecount = get_next_sequence_number(dir_name, basename)
 
             os.makedirs(dir_name, exist_ok=True)
 
@@ -70,4 +72,4 @@ class Script(scripts.Script):
             loop=0
         )
 
-        return Processed(p, images, p.seed, "")
+        return Processed(p, images, p.seed, "", init_subseed)
