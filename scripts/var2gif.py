@@ -53,7 +53,7 @@ class Script(scripts.Script):
 
             return file_path
 
-        subseeds = range(p.subseed, p.subseed + gif_frame_size)
+        subseeds = range(int(p.subseed), int(p.subseed) + gif_frame_size)
 
         procs = []
         for subseed in subseeds:
