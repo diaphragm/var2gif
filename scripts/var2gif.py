@@ -5,7 +5,7 @@ import os
 from modules import processing
 from modules.processing import process_images, Processed
 from modules.shared import opts, cmd_opts, state
-from modules.images import apply_filename_pattern
+from modules.images import apply_filename_pattern, get_next_sequence_number
 
 class Script(scripts.Script):
 
@@ -30,14 +30,26 @@ class Script(scripts.Script):
         processing.fix_seed(p)
         p.batch_size = 1
 
-        # FIXME
         def gif_file_path():
-            file_decoration = opts.samples_filename_pattern or "[seed]-[prompt_spaces]"
-            file_decoration = apply_filename_pattern(file_decoration, p, p.seed, p.prompt)
+            basename = "var2gif"
 
-            os.makedirs(outdir_gif, exist_ok=True)
+            dir_name = outdir_gif
+            if opts.save_to_dirs:
+                subdir_name = apply_filename_pattern(opts.directories_filename_pattern or "[prompt_words]", p, p.seed, p.prompt)
+                dir_name = os.path.join(dir_name, subdir_name)
 
-            return os.path.join(outdir_gif, f"var2gif-{file_decoration}.gif")
+            file_decoration = apply_filename_pattern(opts.samples_filename_pattern or "[seed]-[prompt_spaces]", p, p.seed, p.prompt)
+            basecount = get_next_sequence_number(outdir_gif, basename)
+
+            os.makedirs(dir_name, exist_ok=True)
+
+            for i in range(500):
+                file_name = f"{basename}-{basecount+i:04}-{file_decoration}.gif"
+                file_path = os.path.join(dir_name, file_name)
+                if not os.path.exists(file_path):
+                    break
+
+            return file_path
 
         subseeds = range(p.subseed, p.subseed + gif_frame_size)
 
