@@ -40,10 +40,10 @@ class Script(scripts.Script):
                 subdir_name = apply_filename_pattern(opts.directories_filename_pattern or "[prompt_words]", p, p.seed, p.prompt)
                 dir_name = os.path.join(dir_name, subdir_name)
 
+            os.makedirs(dir_name, exist_ok=True)
+
             file_decoration = apply_filename_pattern(opts.samples_filename_pattern or "[seed]-[prompt_spaces]", p, p.seed, p.prompt)
             basecount = get_next_sequence_number(dir_name, basename)
-
-            os.makedirs(dir_name, exist_ok=True)
 
             for i in range(500):
                 file_name = f"{basename}-{basecount+i:04}-{file_decoration}.gif"
